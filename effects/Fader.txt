@@ -1,0 +1,10 @@
+package com.hyperspatial.effects
+
+	
+	 /**fade out effect
+	 * methods:
+	 * fadeIn(Object,int) int = frames to complete tween
+	 * fadeOut(Object,int) int = frames to complete tween
+	 * ...
+	 * @author adam
+	 */

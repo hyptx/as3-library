@@ -1,0 +1,107 @@
+﻿	
+	/**Flash PHP Bridge Class
+	 * 
+	 * Extend this class to get access to all the PHP Query Strings funcitonality
+	 * 
+	 * Functions:
+	 *  
+	 * 1) getPHPData(location:String):void
+	 *  
+	 * 2) postPHPData(location:String, arrayToPHP:URLVariables) - Send URLVariable Object
+	 *   
+	 * 
+	 * Custom Events:
+	 * 
+	 * 1) FPLoaderEvent.STRING_LOADED - Fired when urlVariables loaded
+	 * Access array data using Event.data
+	 * 
+	 * 
+	 * @author Adam J Nowak, Hyperspatial Design
+	 */
+	
+
+Example Usage:
+
+-----------------------------------------
+
+Main.as
+
+-----------------------------------------
+
+
+package 
+{
+	import flash.net.URLVariables;
+	import com.hyperspatial.loaders.FPBridge;
+	import com.hyperspatial.hyperevents.FPLoaderEvent;
+		
+	/**Main Document Class
+	 * ...
+	 * @author Adam J Nowak
+	 */
+	
+	 public class Main extends FPBridge
+	{
+		private var theArray:URLVariables = new URLVariables();
+		
+		public function Main():void
+		{
+			trace("Constructed MainFetch");
+			go();
+		}
+		
+		function go():void
+		{
+			theArray.part1 = "First Part";
+			theArray.part2 = "Second Part";
+			theArray.part3 = "Third Part";
+			
+			postPHPData('http://hyperspatial.com/working/flash-php-bridge.php',theArray);
+			
+			addEventListener(FPLoaderEvent.STRING_LOADED, viewIt);			
+		}
+		
+		function viewIt(evt:FPLoaderEvent):void
+		{
+			trace ("data in main = " + evt.data['test']);
+			trace ("data in main = " + evt.data['part1']);
+			trace ("data in main = " + evt.data['part2']);
+			trace ("data in main = " + evt.data['part3']);
+		}
+		
+		
+		
+	}
+}
+
+
+----------------------------------------------
+
+flash-php-bridge.php
+
+----------------------------------------------
+
+
+<?php
+
+$return_variables = array();
+
+$return_variables['part1'] = $_POST['part1'];
+$return_variables['part2'] = $_POST['part2'];
+$return_variables['part3'] = $_POST['part3'];
+$return_variables['time'] = time();
+
+//Test Variables
+foreach ($_POST as $key=>$value){
+	$test_array .= " $key - $value >> ";
+}
+$test_variable = "This is from PHP";
+
+$return_variables['test_array'] = $test_array;
+$return_variables['test'] = $test_variable;
+
+//Send variables back to Flash
+$return_string = http_build_query($return_variables);
+print $return_string;
+
+?>
